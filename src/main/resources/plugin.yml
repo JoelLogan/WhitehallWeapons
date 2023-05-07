@@ -1,0 +1,23 @@
+name: WhitehallWeapons
+version: '${project.version}'
+main: com.whitehallplugins.whitehallweapons.Main
+api-version: 1.19
+load: STARTUP
+authors: [Team_Whitehall]
+description: Powerful Weapons, Useful Tools, And Custom Loot Generation
+
+commands:
+  weapons:
+    aliases: [weapon]
+    description: Give yourself the custom WhitehallWeapons items
+    usage: /<command> <item>
+
+permissions:
+  whitehallweapons.*:
+    description: Gives access to all Whitehall Weapons commands
+    children:
+      zombieattack.admin: true
+
+  whitehallweapons.admin:
+    description: This is the main admin permission
+    default: false
