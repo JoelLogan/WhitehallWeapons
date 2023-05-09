@@ -1,6 +1,7 @@
 package com.whitehallplugins.whitehallweapons;
 
 import com.whitehallplugins.whitehallweapons.Commands.WWCommands;
+import com.whitehallplugins.whitehallweapons.Commands.WWTabCompleter;
 import com.whitehallplugins.whitehallweapons.Events.WWEventListener;
 import com.whitehallplugins.whitehallweapons.Items.ItemManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,7 +14,8 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Plugin Starting");
         Objects.requireNonNull(getCommand("weapons")).setExecutor(new WWCommands());
-        getServer().getPluginManager().registerEvents(new WWEventListener(), this);
+        Objects.requireNonNull(getCommand("weapons")).setTabCompleter(new WWTabCompleter());
+        getServer().getPluginManager().registerEvents(new WWEventListener(this), this);
         ItemManager.init();
         getLogger().info("Plugin Started");
     }
