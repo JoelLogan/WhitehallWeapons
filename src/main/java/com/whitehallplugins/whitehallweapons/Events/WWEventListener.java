@@ -35,7 +35,6 @@ public class WWEventListener implements Listener {
     private final Map<Player, Long> cooldowns = new HashMap<>();
     private final Map<Player, Double> savedMaxHealth = new HashMap<>();
     private static final List<PotionEffect> potionEffects = new ArrayList<>();
-    private UUID holdingSword = UUID.randomUUID();
 
     public WWEventListener (Main plugin) {
         this.plugin = plugin;
@@ -43,7 +42,9 @@ public class WWEventListener implements Listener {
 
 
     /**
-     * @TODO No Positive Effects For Dragon Sword Holder
+     * todo Positive Effects Need To Be Removed And Added For More Events
+     * todo Add enchants
+     * todo Check out plugin: <a href="https://www.spigotmc.org/resources/lifesteal-smp-plugin.94387/">...</a>
      */
 
 
@@ -108,7 +109,8 @@ public class WWEventListener implements Listener {
                 if (item.getType().equals(Material.NETHERITE_SWORD)) {
                     if (item.getItemMeta().getEnchants().containsKey(Enchantment.LUCK)) {
                         if (item.getItemMeta().getEnchantLevel(Enchantment.LUCK) == 11) {
-                            addRandomPositiveEffect(player);
+                            addRandomPositiveEffect(player.getKiller());
+                            addEffects(player.getKiller());
                             if (maxHealth > 2.0) {
                                 maxHealth = (Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))).getBaseValue() - 6.0;
                                 savedMaxHealth.put(player, maxHealth);
@@ -125,33 +127,42 @@ public class WWEventListener implements Listener {
     @EventHandler
     public void onSwitchHeldItem(PlayerItemHeldEvent event){
         Player player = event.getPlayer();
-        if (player.getInventory().getItemInMainHand().getEnchantments().containsKey(Enchantment.LUCK)){
-            if (player.getInventory().getItemInMainHand().getEnchantments().get(Enchantment.LUCK) == 11){
-                if (!holdingSword.equals(player.getUniqueId())){
-                    holdingSword = player.getUniqueId();
-                    if (this.plugin.getConfig().getList("ActiveEffects." + player.getUniqueId()) != null) {
-                        for (Object effectType : Objects.requireNonNull(this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId()))) {
-                            PotionEffectType effect = (PotionEffectType) effectType;
-                            if (effect == PotionEffectType.WATER_BREATHING || effect == PotionEffectType.DOLPHINS_GRACE){
-                                player.addPotionEffect(effect.createEffect(PotionEffect.INFINITE_DURATION, 1));
-                            }
-                            else {
-                                player.addPotionEffect(effect.createEffect(PotionEffect.INFINITE_DURATION, 2));
-                            }
-                        }
+        if (player.getInventory().getItem(event.getNewSlot()) != null) {
+            if (Objects.requireNonNull(player.getInventory().getItem(event.getNewSlot())).getType().equals(Material.NETHERITE_SWORD)){
+                if (Objects.requireNonNull(player.getInventory().getItem(event.getNewSlot())).getEnchantments().containsKey(Enchantment.LUCK)) {
+                    if (Objects.requireNonNull(player.getInventory().getItem(event.getNewSlot())).getEnchantments().get(Enchantment.LUCK) == 11) {
+                        addEffects(player);
                     }
                 }
             }
         }
-        else {
-            if (holdingSword.equals(player.getUniqueId())){
-                holdingSword = UUID.randomUUID();
-                if (this.plugin.getConfig().getList("ActiveEffects." + player.getUniqueId()) != null) {
-                    for (Object effectType : Objects.requireNonNull(this.plugin.getConfig().getList("ActiveEffects." + player.getUniqueId()))) {
-                        player.removePotionEffect((PotionEffectType) effectType);
+        if (player.getInventory().getItem(event.getPreviousSlot()) != null) {
+            if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getType().equals(Material.NETHERITE_SWORD)){
+                if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getEnchantments().containsKey(Enchantment.LUCK)) {
+                    if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getEnchantments().get(Enchantment.LUCK) == 11) {
+                        removeEffects(player);
                     }
                 }
             }
+        }
+    }
+
+    private void addEffects(Player player){
+        for (String effectTypeName : this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId())) {
+            PotionEffectType effect = PotionEffectType.getByName(effectTypeName);
+            if (effect != null) {
+                if (effect.getName().equals(PotionEffectType.WATER_BREATHING.getName()) || effect.getName().equals(PotionEffectType.DOLPHINS_GRACE.getName())) {
+                    player.addPotionEffect(effect.createEffect(PotionEffect.INFINITE_DURATION, 0));
+                } else {
+                    player.addPotionEffect(effect.createEffect(PotionEffect.INFINITE_DURATION, 1));
+                }
+            }
+        }
+    }
+
+    private void removeEffects(Player player){
+        for (String effectTypeName : this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId())) {
+            player.removePotionEffect(Objects.requireNonNull(PotionEffectType.getByName(effectTypeName)));
         }
     }
 
@@ -161,9 +172,16 @@ public class WWEventListener implements Listener {
         List<String> savedEffects = this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId());
         while(!added) {
             PotionEffect randomPotionEffect = potionEffects.get(random.nextInt(potionEffects.size() - 1));
-            if (!savedEffects.contains(randomPotionEffect.getType().toString())) {
-                savedEffects.add(randomPotionEffect.getType().toString());
-                this.plugin.getConfig().set("ActiveEffects." + player.getUniqueId(), savedEffects);
+            if (!savedEffects.isEmpty()) {
+                if (!savedEffects.contains(randomPotionEffect.getType().getName())) {
+                    savedEffects.add(randomPotionEffect.getType().getName());
+                    this.plugin.getConfig().set("ActiveEffects." + player.getUniqueId(), savedEffects);
+                }
+            }
+            else {
+                List<String> unsavedEffects = new ArrayList<>();
+                unsavedEffects.add(randomPotionEffect.getType().getName());
+                this.plugin.getConfig().set("ActiveEffects." + player.getUniqueId(), unsavedEffects);
             }
             this.plugin.saveConfig();
             added = true;

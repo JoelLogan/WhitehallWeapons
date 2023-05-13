@@ -46,7 +46,7 @@ public class ItemManager {
         lore.add(Component.text("§9they will permanently lose §d3 hearts§9."));
         lore.add(Component.text(""));
         lore.add(Component.text("§7 -§9If a player is killed with this sword,"));
-        lore.add(Component.text("§9they will receive a §anegative potion effect"));
+        lore.add(Component.text("§9you will receive a §apositive potion effect"));
         lore.add(Component.text("§9that will be active while the sword is held.")); // Make sure only held by a player
         meta.lore(lore);
         meta.addEnchant(Enchantment.LUCK, 11, true);
