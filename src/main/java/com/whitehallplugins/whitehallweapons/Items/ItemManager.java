@@ -38,7 +38,7 @@ public class ItemManager {
     private static void createDragonSword() {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§5Dragon Sword"));
+        meta.displayName(Component.text("§5Essence Blade"));
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§aA deadly sword that §7§lEffectively §aremoves hearts"));
         lore.add(Component.text(""));
@@ -73,7 +73,7 @@ public class ItemManager {
     private static void createFlameScythe() {
         ItemStack item = new ItemStack(Material.NETHERITE_HOE, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§4Flame Scythe"));         // @TODO Loot Generation NEEDED
+        meta.displayName(Component.text("§4Reaper Scythe"));         // @TODO Loot Generation NEEDED
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§9A powerful weapon that §4§lBURNS §9enemies"));
         meta.lore(lore);
@@ -97,10 +97,11 @@ public class ItemManager {
     private static void createEvokerAxe() {
         ItemStack item = new ItemStack(Material.NETHERITE_AXE, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§6Evoker Axe"));         // @TODO Loot Generation NEEDED
+        meta.displayName(Component.text("§aAxe Of The Green Earth"));         // @TODO Loot Generation NEEDED
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§9A hungry axe that can summon"));
         lore.add(Component.text("§6Evoker jaws §9when right-clicked"));
+        lore.add(Component.text("§8(10 Second Cooldown)"));
         meta.lore(lore);
         meta.addEnchant(Enchantment.LUCK, 13, true);
         meta.setUnbreakable(true);
@@ -119,7 +120,7 @@ public class ItemManager {
     private static void createFreezeGun() {
         ItemStack item = new ItemStack(Material.CROSSBOW, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§bFreeze Gun"));         // @TODO Loot Generation+Mobs NEEDED
+        meta.displayName(Component.text("§bFrost Bow"));         // @TODO Loot Generation+Mobs NEEDED
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§3An icy crossbow that can inflicts"));
         lore.add(Component.text("§3slowness and appears to freeze enemies"));
@@ -139,7 +140,7 @@ public class ItemManager {
     private static void createBlastInducingBow() {
         ItemStack item = new ItemStack(Material.BOW, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§aBlast-Inducing Bow"));         // @TODO Loot Generation NEEDED
+        meta.displayName(Component.text("§aBlast Bow"));         // @TODO Loot Generation NEEDED
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§7A seemingly normal bow that"));
         lore.add(Component.text("§ccreates an §lexplosion §cupon impact"));
@@ -160,12 +161,12 @@ public class ItemManager {
     private static void createQuickPick() {
         ItemStack item = new ItemStack(Material.NETHERITE_PICKAXE, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§fThe Quick Pick"));         // @TODO Loot Generation NEEDED
+        meta.displayName(Component.text("§6Pick of Vitality"));         // @TODO Loot Generation NEEDED
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§6The ultimate pickaxe!"));
         lore.add(Component.text(""));
         lore.add(Component.text("§5A fortunate pickaxe that mines a 3x3 hole"));
-        lore.add(Component.text("§5and automatically smelts materials mined"));
+        lore.add(Component.text("§5and automatically smelts ores mined"));
         meta.lore(lore);
         meta.addEnchant(Enchantment.LUCK, 16, true);
         meta.addEnchant(Enchantment.DIG_SPEED, 7, true);

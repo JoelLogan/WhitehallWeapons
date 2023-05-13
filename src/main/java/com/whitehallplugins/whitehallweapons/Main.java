@@ -17,6 +17,8 @@ public final class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("weapons")).setTabCompleter(new WWTabCompleter());
         getServer().getPluginManager().registerEvents(new WWEventListener(this), this);
         ItemManager.init();
+        WWEventListener.init();
+        saveDefaultConfig();
         getLogger().info("Plugin Started");
     }
 
