@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -16,11 +17,14 @@ import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareGrindstoneEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -40,14 +44,6 @@ public class WWEventListener implements Listener {
         this.plugin = plugin;
     }
 
-
-    /**
-     * todo Positive Effects Need To Be Removed And Added For More Events
-     * todo Add enchants
-     * todo Check out plugin: <a href="https://www.spigotmc.org/resources/lifesteal-smp-plugin.94387/">...</a>
-     */
-
-
     public static void init(){
         potionEffects.add(PotionEffectType.INCREASE_DAMAGE.createEffect(PotionEffect.INFINITE_DURATION, 2));
         potionEffects.add(PotionEffectType.SPEED.createEffect(PotionEffect.INFINITE_DURATION, 2));
@@ -56,6 +52,12 @@ public class WWEventListener implements Listener {
         potionEffects.add(PotionEffectType.DOLPHINS_GRACE.createEffect(PotionEffect.INFINITE_DURATION, 1));
         potionEffects.add(PotionEffectType.WATER_BREATHING.createEffect(PotionEffect.INFINITE_DURATION, 1));
     }
+
+    /**
+     * todo Positive Effects Need To Be Removed And Added For More Events
+     * todo Add enchants
+     * todo Check out plugin: <a href="https://www.spigotmc.org/resources/lifesteal-smp-plugin.94387/">...</a>
+     */
 
     @EventHandler
     public void onRightClick(PlayerInteractEvent event){
@@ -143,6 +145,21 @@ public class WWEventListener implements Listener {
                         removeEffects(player);
                     }
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onInventoryChange(InventoryInteractEvent event){
+        HumanEntity player = event.getWhoClicked();
+        if (PotionEffectType.getByName(this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId()).get(0)) != null) {
+            if (!player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && player.getInventory().contains(Material.NETHERITE_SWORD)) {
+                if (player.hasPotionEffect(Objects.requireNonNull(PotionEffectType.getByName(this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId()).get(0))))) {
+                    removeEffects((Player) player);
+                }
+            }
+            else if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_LUCK)).getModifiers().contains(new AttributeModifier("Enchantable", 0.1, AttributeModifier.Operation.ADD_NUMBER))){
+                addEffects((Player) player);
             }
         }
     }

@@ -50,6 +50,7 @@ public class ItemManager {
         lore.add(Component.text("§9that will be active while the sword is held.")); // Make sure only held by a player
         meta.lore(lore);
         meta.addEnchant(Enchantment.LUCK, 11, true);
+        meta.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.randomUUID(), "Enchantable", 0.1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
         meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
