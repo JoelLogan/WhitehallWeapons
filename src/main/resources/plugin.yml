@@ -16,7 +16,7 @@ permissions:
   whitehallweapons.*:
     description: Gives access to all Whitehall Weapons commands
     children:
-      zombieattack.admin: true
+      whitehallweapons.admin: true
 
   whitehallweapons.admin:
     description: This is the main admin permission
