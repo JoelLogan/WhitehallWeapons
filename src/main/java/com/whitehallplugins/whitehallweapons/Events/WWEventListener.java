@@ -5,7 +5,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -14,17 +13,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.inventory.InventoryEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.inventory.PrepareGrindstoneEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.event.inventory.*;
+import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -109,16 +104,14 @@ public class WWEventListener implements Listener {
                 Player attacker = player.getKiller();
                 ItemStack item = attacker.getInventory().getItemInMainHand();
                 if (item.getType().equals(Material.NETHERITE_SWORD)) {
-                    if (item.getItemMeta().getEnchants().containsKey(Enchantment.LUCK)) {
-                        if (item.getItemMeta().getEnchantLevel(Enchantment.LUCK) == 11) {
-                            addRandomPositiveEffect(player.getKiller());
-                            addEffects(player.getKiller());
-                            if (maxHealth > 2.0) {
-                                maxHealth = (Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))).getBaseValue() - 6.0;
-                                savedMaxHealth.put(player, maxHealth);
-                            } else {
-                                player.banPlayer("You have run out of life.");
-                            }
+                    if (item.getItemMeta().hasItemFlag(ItemFlag.HIDE_DYE)){
+                        addRandomPositiveEffect(player.getKiller());
+                        addEffects(player.getKiller());
+                        if (maxHealth > 2.0) {
+                            maxHealth = (Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))).getBaseValue() - 6.0;
+                            savedMaxHealth.put(player, maxHealth);
+                        } else {
+                            player.banPlayer("You have run out of life.");
                         }
                     }
                 }
@@ -130,36 +123,71 @@ public class WWEventListener implements Listener {
     public void onSwitchHeldItem(PlayerItemHeldEvent event){
         Player player = event.getPlayer();
         if (player.getInventory().getItem(event.getNewSlot()) != null) {
-            if (Objects.requireNonNull(player.getInventory().getItem(event.getNewSlot())).getType().equals(Material.NETHERITE_SWORD)){
-                if (Objects.requireNonNull(player.getInventory().getItem(event.getNewSlot())).getEnchantments().containsKey(Enchantment.LUCK)) {
-                    if (Objects.requireNonNull(player.getInventory().getItem(event.getNewSlot())).getEnchantments().get(Enchantment.LUCK) == 11) {
-                        addEffects(player);
-                    }
-                }
+            if (Objects.requireNonNull(player.getInventory().getItem(event.getNewSlot())).getItemMeta().hasItemFlag(ItemFlag.HIDE_DYE)){
+                addEffects(player);
             }
         }
         if (player.getInventory().getItem(event.getPreviousSlot()) != null) {
             if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getType().equals(Material.NETHERITE_SWORD)){
-                if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getEnchantments().containsKey(Enchantment.LUCK)) {
-                    if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getEnchantments().get(Enchantment.LUCK) == 11) {
+                if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getItemMeta().hasItemFlag(ItemFlag.HIDE_DYE)){
                         removeEffects(player);
-                    }
                 }
             }
         }
     }
 
     @EventHandler
-    public void onInventoryChange(InventoryInteractEvent event){
-        HumanEntity player = event.getWhoClicked();
-        if (PotionEffectType.getByName(this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId()).get(0)) != null) {
-            if (!player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && player.getInventory().contains(Material.NETHERITE_SWORD)) {
-                if (player.hasPotionEffect(Objects.requireNonNull(PotionEffectType.getByName(this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId()).get(0))))) {
-                    removeEffects((Player) player);
+    public void onInventoryClick(InventoryClickEvent event){
+        CheckEffects(event.getWhoClicked());
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event){
+        CheckEffects(event.getWhoClicked());
+    }
+
+    @EventHandler
+    public void onSwapHands(PlayerSwapHandItemsEvent event){
+        CheckEffects(event.getPlayer());
+    }
+
+    private void CheckEffects(HumanEntity whoClicked) {
+        Player player = (Player) whoClicked;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && player.getInventory().getItemInMainHand().getItemFlags().contains(ItemFlag.HIDE_DYE)) {
+                    addEffects(player);
+                }
+                else if (!player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && !player.getInventory().getItemInMainHand().getItemFlags().contains(ItemFlag.HIDE_DYE)){
+                    removeEffects(player);
                 }
             }
-            else if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_LUCK)).getModifiers().contains(new AttributeModifier("Enchantable", 0.1, AttributeModifier.Operation.ADD_NUMBER))){
-                addEffects((Player) player);
+        }.runTaskLater(this.plugin, 10L);
+    }
+
+    @EventHandler
+    public void onDropItem(PlayerDropItemEvent event){
+        if (event.getItemDrop().getItemStack().getItemFlags().contains(ItemFlag.HIDE_DYE)){
+            removeEffects(event.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onPickupItem(EntityPickupItemEvent event){
+        if (event.getEntity().getType().equals(EntityType.PLAYER)) {
+            Player player = (Player) event.getEntity();
+            if (event.getItem().getItemStack().getItemFlags().contains(ItemFlag.HIDE_DYE)) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD)) {
+                            if (player.getInventory().getItemInMainHand().getItemFlags().contains(ItemFlag.HIDE_DYE)) {
+                                addEffects(player);
+                            }
+                        }
+                    }
+                }.runTaskLater(this.plugin, 10L);
             }
         }
     }
@@ -237,6 +265,9 @@ public class WWEventListener implements Listener {
                 if (event.getInventory().getSecondItem().getEnchantments().get(Enchantment.LUCK) > 10) {
                     event.setResult(null);
                 }
+            }
+            if (event.getInventory().getSecondItem().getItemFlags().contains(ItemFlag.HIDE_DYE)) {
+                event.setResult(null);
             }
         }
     }

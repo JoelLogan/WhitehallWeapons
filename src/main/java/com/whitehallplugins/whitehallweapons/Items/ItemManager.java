@@ -1,6 +1,7 @@
 package com.whitehallplugins.whitehallweapons.Items;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -38,7 +39,7 @@ public class ItemManager {
     private static void createDragonSword() {
         ItemStack item = new ItemStack(Material.NETHERITE_SWORD, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§5Essence Blade"));
+        meta.displayName(Component.text("Essence Blade").color(TextColor.fromHexString("#AA00AA")));
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§aA deadly sword that §7§lEffectively §aremoves hearts"));
         lore.add(Component.text(""));
@@ -49,10 +50,8 @@ public class ItemManager {
         lore.add(Component.text("§9you will receive a §apositive potion effect"));
         lore.add(Component.text("§9that will be active while the sword is held.")); // Make sure only held by a player
         meta.lore(lore);
-        meta.addEnchant(Enchantment.LUCK, 11, true);
-        meta.addAttributeModifier(Attribute.GENERIC_LUCK, new AttributeModifier(UUID.randomUUID(), "Enchantable", 0.1, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
         meta.setUnbreakable(true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        meta.addItemFlags(ItemFlag.HIDE_DYE);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         item.setItemMeta(meta);
@@ -74,7 +73,7 @@ public class ItemManager {
     private static void createFlameScythe() {
         ItemStack item = new ItemStack(Material.NETHERITE_HOE, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§4Reaper Scythe"));         // @TODO Loot Generation NEEDED
+        meta.displayName(Component.text("Reaper Scythe").color(TextColor.fromHexString("#AA0000")));
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§9A powerful weapon that §4§lBURNS §9enemies"));
         meta.lore(lore);
@@ -98,7 +97,7 @@ public class ItemManager {
     private static void createEvokerAxe() {
         ItemStack item = new ItemStack(Material.NETHERITE_AXE, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§aAxe Of The Green Earth"));         // @TODO Loot Generation NEEDED
+        meta.displayName(Component.text("Axe Of The Green Earth").color(TextColor.fromHexString("#55FF55")));
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§9A hungry axe that can summon"));
         lore.add(Component.text("§6Evoker jaws §9when right-clicked"));
@@ -121,7 +120,7 @@ public class ItemManager {
     private static void createFreezeGun() {
         ItemStack item = new ItemStack(Material.CROSSBOW, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§bFrost Bow"));         // @TODO Loot Generation+Mobs NEEDED
+        meta.displayName(Component.text("Frost Bow").color(TextColor.fromHexString("#55FFFF")));
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§3An icy crossbow that can inflicts"));
         lore.add(Component.text("§3slowness and appears to freeze enemies"));
@@ -141,7 +140,7 @@ public class ItemManager {
     private static void createBlastInducingBow() {
         ItemStack item = new ItemStack(Material.BOW, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§aBlast Bow"));         // @TODO Loot Generation NEEDED
+        meta.displayName(Component.text("Blast Bow").color(TextColor.fromHexString("#55FF55")));
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§7A seemingly normal bow that"));
         lore.add(Component.text("§ccreates an §lexplosion §cupon impact"));
@@ -162,7 +161,7 @@ public class ItemManager {
     private static void createQuickPick() {
         ItemStack item = new ItemStack(Material.NETHERITE_PICKAXE, 1);
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text("§6Pick of Vitality"));         // @TODO Loot Generation NEEDED
+        meta.displayName(Component.text("Pick of Vitality").color(TextColor.fromHexString("#FFAA00")));
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§6The ultimate pickaxe!"));
         lore.add(Component.text(""));
