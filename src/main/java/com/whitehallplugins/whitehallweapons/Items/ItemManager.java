@@ -48,21 +48,28 @@ public class ItemManager {
         lore.add(Component.text(""));
         lore.add(Component.text("§7 -§9If a player is killed with this sword,"));
         lore.add(Component.text("§9you will receive a §apositive potion effect"));
-        lore.add(Component.text("§9that will be active while the sword is held.")); // Make sure only held by a player
+        lore.add(Component.text("§9that will be active while the sword is held."));
+        lore.add(Component.text(""));
+        lore.add(Component.text("§8(Once you have all effects"));
+        lore.add(Component.text("§8no permanent heart loss will occur.)"));
         meta.lore(lore);
         meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_DYE);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.setCustomModelData(1);
         item.setItemMeta(meta);
         dragonSword = item;
 
         ShapedRecipe sr = new ShapedRecipe(NamespacedKey.minecraft("dragonsword"), dragonSword);
-        sr.shape(" E ",
-                 " S ",
-                 "   ");
+        sr.shape("SAS",
+                 "NEN",
+                 "STS");
         sr.setIngredient('E', Material.DRAGON_EGG);
-        sr.setIngredient('S', Material.STICK);
+        sr.setIngredient('A', Material.ENCHANTED_GOLDEN_APPLE);
+        sr.setIngredient('T', Material.TOTEM_OF_UNDYING);
+        sr.setIngredient('S', Material.NETHER_STAR);
+        sr.setIngredient('N', Material.NETHERITE_INGOT);
         Bukkit.getServer().addRecipe(sr);
     }
 
@@ -71,21 +78,22 @@ public class ItemManager {
      * 9 attack damage and a 5 second hit cooldown found in a temple on the nether roof.
      */
     private static void createFlameScythe() {
-        ItemStack item = new ItemStack(Material.NETHERITE_HOE, 1);
+        ItemStack item = new ItemStack(Material.NETHERITE_SWORD, 1);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text("Reaper Scythe").color(TextColor.fromHexString("#AA0000")));
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("§9A powerful weapon that §4§lBURNS §9enemies"));
         meta.lore(lore);
         meta.addEnchant(Enchantment.LUCK, 12, true);
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 15, true);
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 13, true);
         meta.addEnchant(Enchantment.SWEEPING_EDGE, 10, true);
         meta.addEnchant(Enchantment.FIRE_ASPECT, 3, true);
-        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, new AttributeModifier(UUID.randomUUID(), "Slower", -3.8, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
+        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, new AttributeModifier(UUID.randomUUID(), "Slower", -3.5, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
         meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.setCustomModelData(2);
         item.setItemMeta(meta);
         flameScythe = item;
     }
@@ -103,11 +111,13 @@ public class ItemManager {
         lore.add(Component.text("§6Evoker jaws §9when right-clicked"));
         lore.add(Component.text("§8(10 Second Cooldown)"));
         meta.lore(lore);
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 3, true);
         meta.addEnchant(Enchantment.LUCK, 13, true);
         meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.setCustomModelData(1);
         item.setItemMeta(meta);
         evokerAxe = item;
     }
@@ -130,6 +140,7 @@ public class ItemManager {
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.setCustomModelData(1);
         item.setItemMeta(meta);
         freezeGun = item;
     }
@@ -146,10 +157,12 @@ public class ItemManager {
         lore.add(Component.text("§ccreates an §lexplosion §cupon impact"));
         meta.lore(lore);
         meta.addEnchant(Enchantment.LUCK, 15, true);
+        meta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
         meta.setUnbreakable(true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.setCustomModelData(1);
         item.setItemMeta(meta);
         blastInducingBow = item;
     }
@@ -175,6 +188,7 @@ public class ItemManager {
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        meta.setCustomModelData(1);
         item.setItemMeta(meta);
         quickPick = item;
     }

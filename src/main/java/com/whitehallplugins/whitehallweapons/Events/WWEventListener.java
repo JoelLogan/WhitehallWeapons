@@ -13,10 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemFlag;
@@ -40,17 +37,18 @@ public class WWEventListener implements Listener {
     }
 
     public static void init(){
-        potionEffects.add(PotionEffectType.INCREASE_DAMAGE.createEffect(PotionEffect.INFINITE_DURATION, 2));
-        potionEffects.add(PotionEffectType.SPEED.createEffect(PotionEffect.INFINITE_DURATION, 2));
-        potionEffects.add(PotionEffectType.REGENERATION.createEffect(PotionEffect.INFINITE_DURATION, 2));
-        potionEffects.add(PotionEffectType.FAST_DIGGING.createEffect(PotionEffect.INFINITE_DURATION, 2));
+        potionEffects.add(PotionEffectType.INCREASE_DAMAGE.createEffect(PotionEffect.INFINITE_DURATION, 1));
+        potionEffects.add(PotionEffectType.SPEED.createEffect(PotionEffect.INFINITE_DURATION, 1));
+        potionEffects.add(PotionEffectType.REGENERATION.createEffect(PotionEffect.INFINITE_DURATION, 1));
+        potionEffects.add(PotionEffectType.FAST_DIGGING.createEffect(PotionEffect.INFINITE_DURATION, 1));
         potionEffects.add(PotionEffectType.DOLPHINS_GRACE.createEffect(PotionEffect.INFINITE_DURATION, 1));
         potionEffects.add(PotionEffectType.WATER_BREATHING.createEffect(PotionEffect.INFINITE_DURATION, 1));
     }
 
     /**
-     * todo Positive Effects Need To Be Removed And Added For More Events
-     * todo Add enchants
+     * (When placing structure) worldborder = 10,000
+     * Essence blade screenshot is wrong
+     * Blast bow is in basault delta instead of y15
      * todo Check out plugin: <a href="https://www.spigotmc.org/resources/lifesteal-smp-plugin.94387/">...</a>
      */
 
@@ -65,10 +63,10 @@ public class WWEventListener implements Listener {
                         if (!cooldowns.containsKey(player)) {
                             Location location = player.getLocation();
                             Vector playerDirection = location.getDirection();
-                            for (int i = 1; i < 10; ++i) {
-                                int blockX = location.getBlockX() + (int) (playerDirection.getX() * i);
-                                int blockY = location.getBlockY() + (int) (playerDirection.getY() * i);
-                                int blockZ = location.getBlockZ() + (int) (playerDirection.getZ() * i);
+                            for (int i = 1; i < 12; ++i) {
+                                double blockX = location.getX() + (int) (playerDirection.getX() * i);
+                                double blockY = location.getY() + (int) (playerDirection.getY() * i);
+                                double blockZ = location.getZ() + (int) (playerDirection.getZ() * i);
                                 Location finalLocation = new Location(player.getWorld(), blockX, blockY, blockZ);
                                 EvokerFangs evokerFangs = (EvokerFangs) event.getPlayer().getWorld().spawnEntity(finalLocation, EntityType.EVOKER_FANGS);
                                 evokerFangs.setOwner(event.getPlayer());
@@ -105,13 +103,19 @@ public class WWEventListener implements Listener {
                 ItemStack item = attacker.getInventory().getItemInMainHand();
                 if (item.getType().equals(Material.NETHERITE_SWORD)) {
                     if (item.getItemMeta().hasItemFlag(ItemFlag.HIDE_DYE)){
-                        addRandomPositiveEffect(player.getKiller());
-                        addEffects(player.getKiller());
-                        if (maxHealth > 2.0) {
-                            maxHealth = (Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))).getBaseValue() - 6.0;
-                            savedMaxHealth.put(player, maxHealth);
-                        } else {
-                            player.banPlayer("You have run out of life.");
+                        List<String> savedEffects = this.plugin.getConfig().getStringList("ActiveEffects." + attacker.getUniqueId());
+                        if (savedEffects.size() != potionEffects.size()) {
+                            addRandomPositiveEffect(attacker);
+                            addEffects(attacker);
+                            if (maxHealth > 2.0) {
+                                maxHealth = (Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))).getBaseValue() - 2.0;
+                                savedMaxHealth.put(player, maxHealth);
+                            } else {
+                                player.banPlayer("You have run out of life.");
+                            }
+                        }
+                        else {
+                            attacker.sendMessage(Component.text("§8You are at max potion effects, so you now won't remove extra hearts from players killed with this sword."));
                         }
                     }
                 }
@@ -130,7 +134,7 @@ public class WWEventListener implements Listener {
         if (player.getInventory().getItem(event.getPreviousSlot()) != null) {
             if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getType().equals(Material.NETHERITE_SWORD)){
                 if (Objects.requireNonNull(player.getInventory().getItem(event.getPreviousSlot())).getItemMeta().hasItemFlag(ItemFlag.HIDE_DYE)){
-                        removeEffects(player);
+                    removeEffects(player);
                 }
             }
         }
@@ -156,10 +160,21 @@ public class WWEventListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && player.getInventory().getItemInMainHand().getItemFlags().contains(ItemFlag.HIDE_DYE)) {
+                boolean present = false;
+                if (player.getInventory().getItemInMainHand().hasItemMeta()){
+                    if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && player.getInventory().getItemInMainHand().getItemFlags().contains(ItemFlag.HIDE_DYE)) {
+                        present = true;
+                    }
+                }
+                if (player.getInventory().getItemInOffHand().hasItemMeta()){
+                    if (player.getInventory().getItemInOffHand().getType().equals(Material.NETHERITE_SWORD) && player.getInventory().getItemInOffHand().getItemFlags().contains(ItemFlag.HIDE_DYE)){
+                        present = true;
+                    }
+                }
+                if (present){
                     addEffects(player);
                 }
-                else if (!player.getInventory().getItemInMainHand().getType().equals(Material.NETHERITE_SWORD) && !player.getInventory().getItemInMainHand().getItemFlags().contains(ItemFlag.HIDE_DYE)){
+                else {
                     removeEffects(player);
                 }
             }
@@ -196,11 +211,11 @@ public class WWEventListener implements Listener {
         for (String effectTypeName : this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId())) {
             PotionEffectType effect = PotionEffectType.getByName(effectTypeName);
             if (effect != null) {
-                if (effect.getName().equals(PotionEffectType.WATER_BREATHING.getName()) || effect.getName().equals(PotionEffectType.DOLPHINS_GRACE.getName())) {
-                    player.addPotionEffect(effect.createEffect(PotionEffect.INFINITE_DURATION, 0));
-                } else {
-                    player.addPotionEffect(effect.createEffect(PotionEffect.INFINITE_DURATION, 1));
-                }
+//                if (effect.getName().equals(PotionEffectType.WATER_BREATHING.getName()) || effect.getName().equals(PotionEffectType.DOLPHINS_GRACE.getName())) {
+                player.addPotionEffect(effect.createEffect(PotionEffect.INFINITE_DURATION, 0));
+//                } else {
+//                    player.addPotionEffect(effect.createEffect(PotionEffect.INFINITE_DURATION, 1));
+//                }
             }
         }
     }
@@ -216,20 +231,26 @@ public class WWEventListener implements Listener {
         Random random = new Random();
         List<String> savedEffects = this.plugin.getConfig().getStringList("ActiveEffects." + player.getUniqueId());
         while(!added) {
-            PotionEffect randomPotionEffect = potionEffects.get(random.nextInt(potionEffects.size() - 1));
+            PotionEffect randomPotionEffect = potionEffects.get(random.nextInt(potionEffects.size()));
             if (!savedEffects.isEmpty()) {
                 if (!savedEffects.contains(randomPotionEffect.getType().getName())) {
                     savedEffects.add(randomPotionEffect.getType().getName());
                     this.plugin.getConfig().set("ActiveEffects." + player.getUniqueId(), savedEffects);
+                    added = true;
+                }
+                else {
+                    if (savedEffects.size() == potionEffects.size()){
+                        added = true;
+                    }
                 }
             }
             else {
                 List<String> unsavedEffects = new ArrayList<>();
                 unsavedEffects.add(randomPotionEffect.getType().getName());
                 this.plugin.getConfig().set("ActiveEffects." + player.getUniqueId(), unsavedEffects);
+                added = true;
             }
             this.plugin.saveConfig();
-            added = true;
         }
     }
 
@@ -294,14 +315,16 @@ public class WWEventListener implements Listener {
     public void onPlayerFireArrow(EntityShootBowEvent event){
         if (event.getEntity().getType().equals(EntityType.PLAYER)){
             Player player = (Player) event.getEntity();
-            if (player.getInventory().getItemInMainHand().getEnchantments().containsKey(Enchantment.LUCK)){
-                if (player.getInventory().getItemInMainHand().getEnchantments().get(Enchantment.LUCK) == 14){
+            if (player.getInventory().getItem(event.getHand()).getEnchantments().containsKey(Enchantment.LUCK)){
+                if (player.getInventory().getItem(event.getHand()).getEnchantments().get(Enchantment.LUCK) == 14){
                     Arrow arrow = (Arrow) event.getProjectile();
                     arrow.addCustomEffect(PotionEffectType.SLOW.createEffect(200, 1), false);
                 }
-                else if (player.getInventory().getItemInMainHand().getEnchantments().get(Enchantment.LUCK) == 15){
-                    Arrow arrow = (Arrow) event.getProjectile();
-                    arrow.addCustomEffect(PotionEffectType.INCREASE_DAMAGE.createEffect(1, 10), false);
+                else if (player.getInventory().getItem(event.getHand()).getEnchantments().get(Enchantment.LUCK) == 15){
+                    if (event.getForce() > 0.9) {
+                        Arrow arrow = (Arrow) event.getProjectile();
+                        arrow.addCustomEffect(PotionEffectType.INCREASE_DAMAGE.createEffect(1, 10), false);
+                    }
                 }
             }
         }
@@ -320,7 +343,16 @@ public class WWEventListener implements Listener {
                 arrow.remove();
             }
             else if (arrow.getCustomEffects().contains(PotionEffectType.INCREASE_DAMAGE.createEffect(1, 10))){
-                arrow.getLocation().createExplosion(arrow, 4F, false, true);
+                Location location = arrow.getLocation();
+                location.createExplosion(arrow, 3F, false, true);
+                for (double x = location.getX() - 2; x <= location.getX() + 2; x++) {
+                    for (double y = location.getY() - 2; y <= location.getY() + 2; y++) {
+                        for (double z = location.getZ() - 2; z <= location.getZ() + 2; z++) {
+                            location.createExplosion(arrow, 0.75F, false, false);
+                        }
+                    }
+                }
+
                 arrow.remove();
             }
         }
@@ -352,7 +384,7 @@ public class WWEventListener implements Listener {
         switch (blockType) {
             case ANCIENT_DEBRIS:
                 block.getWorld().getBlockAt(location).setType(Material.AIR);
-                block.getWorld().dropItemNaturally(location, new ItemStack(Material.NETHERITE_SCRAP));
+                block.getWorld().dropItemNaturally(location, new ItemStack(Material.NETHERITE_SCRAP, random.nextInt(1, 3)));
                 break;
             case COPPER_ORE:
                 block.getWorld().getBlockAt(location).setType(Material.AIR);
@@ -369,6 +401,45 @@ public class WWEventListener implements Listener {
             default:
                 block.getWorld().getBlockAt(x, y, z).breakNaturally(player.getInventory().getItemInMainHand());
                 break;
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageByEntityEvent event){
+        if (event.getDamager().getType().equals(EntityType.EVOKER_FANGS)){
+            EvokerFangs fangs = (EvokerFangs) event.getDamager();
+            if (fangs.getOwner() != null) {
+                if (fangs.getOwner().getType().equals(EntityType.PLAYER)) {
+                    event.setDamage(9.0);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event){
+        if (event.getEntityType().equals(EntityType.DROPPED_ITEM)) {
+            if (event.getCause().equals(EntityDamageEvent.DamageCause.LAVA) || event.getCause().equals(EntityDamageEvent.DamageCause.FIRE)) {
+                ItemStack item = ((Item) event.getEntity()).getItemStack();
+                if (item.getType().equals(Material.BOW) || item.getType().equals(Material.CROSSBOW)) {
+                    if (item.hasItemMeta()) {
+                        if (item.getItemMeta().getEnchants().containsKey(Enchantment.LUCK)) {
+                            if (item.getItemMeta().getEnchantLevel(Enchantment.LUCK) == 14 || item.getItemMeta().getEnchantLevel(Enchantment.LUCK) == 15) {
+                                event.getEntity().setInvulnerable(true);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if ((!event.getEntity().isInLava() && !event.getEntity().isOnGround() && !event.getEntity().isVisualFire()) || !event.getEntity().isValid()) {
+                                            event.getEntity().setInvulnerable(false);
+                                            cancel();
+                                        }
+                                    }
+                                }.runTaskTimer(this.plugin, 20L, 100L);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
