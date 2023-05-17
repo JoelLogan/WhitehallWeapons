@@ -57,7 +57,7 @@ public class ItemManager {
         meta.addItemFlags(ItemFlag.HIDE_DYE);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        meta.setCustomModelData(1);
+        meta.setCustomModelData(500);
         item.setItemMeta(meta);
         dragonSword = item;
 
@@ -93,7 +93,7 @@ public class ItemManager {
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        meta.setCustomModelData(2);
+        meta.setCustomModelData(501);
         item.setItemMeta(meta);
         flameScythe = item;
     }
@@ -117,7 +117,7 @@ public class ItemManager {
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        meta.setCustomModelData(1);
+        meta.setCustomModelData(500);
         item.setItemMeta(meta);
         evokerAxe = item;
     }
@@ -140,7 +140,7 @@ public class ItemManager {
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        meta.setCustomModelData(1);
+        meta.setCustomModelData(500);
         item.setItemMeta(meta);
         freezeGun = item;
     }
@@ -162,7 +162,7 @@ public class ItemManager {
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        meta.setCustomModelData(1);
+        meta.setCustomModelData(500);
         item.setItemMeta(meta);
         blastInducingBow = item;
     }
@@ -188,7 +188,7 @@ public class ItemManager {
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-        meta.setCustomModelData(1);
+        meta.setCustomModelData(500);
         item.setItemMeta(meta);
         quickPick = item;
     }
