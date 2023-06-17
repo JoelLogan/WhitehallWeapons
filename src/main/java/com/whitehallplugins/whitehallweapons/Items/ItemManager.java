@@ -85,8 +85,8 @@ public class ItemManager {
         lore.add(Component.text("§9A powerful weapon that §4§lBURNS §9enemies"));
         meta.lore(lore);
         meta.addEnchant(Enchantment.LUCK, 12, true);
-        meta.addEnchant(Enchantment.DAMAGE_ALL, 13, true);
-        meta.addEnchant(Enchantment.SWEEPING_EDGE, 10, true);
+        meta.addEnchant(Enchantment.DAMAGE_ALL, 70, true); // 13
+        meta.addEnchant(Enchantment.SWEEPING_EDGE, 16, true); // 10
         meta.addEnchant(Enchantment.FIRE_ASPECT, 3, true);
         meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, new AttributeModifier(UUID.randomUUID(), "Slower", -3.5, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND));
         meta.setUnbreakable(true);

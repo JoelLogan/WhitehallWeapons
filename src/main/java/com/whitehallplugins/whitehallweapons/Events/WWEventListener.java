@@ -410,7 +410,7 @@ public class WWEventListener implements Listener {
             EvokerFangs fangs = (EvokerFangs) event.getDamager();
             if (fangs.getOwner() != null) {
                 if (fangs.getOwner().getType().equals(EntityType.PLAYER)) {
-                    event.setDamage(9.0);
+                    event.setDamage(22.0);
                 }
             }
         }
