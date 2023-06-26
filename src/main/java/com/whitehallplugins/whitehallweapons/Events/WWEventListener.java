@@ -2,6 +2,8 @@ package com.whitehallplugins.whitehallweapons.Events;
 
 import com.whitehallplugins.whitehallweapons.Main;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -9,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -45,12 +48,10 @@ public class WWEventListener implements Listener {
         potionEffects.add(PotionEffectType.WATER_BREATHING.createEffect(PotionEffect.INFINITE_DURATION, 1));
     }
 
-    /**
-     * (When placing structure) worldborder = 10,000
-     * Essence blade screenshot is wrong
-     * Blast bow is in basault delta instead of y15
-     * todo Check out plugin: <a href="https://www.spigotmc.org/resources/lifesteal-smp-plugin.94387/">...</a>
-     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        event.getPlayer().setResourcePack("https://raw.githubusercontent.com/JoelLogan/WhitehallWeapons/master/Immortals_SMP_Pack.zip", "b2a2e377213004b26cff9e7190f5c3afd4c032ec", true, Component.text("This resource pack is required for the custom textures of the Immortals items", Style.style(TextDecoration.BOLD)));
+    }
 
     @EventHandler
     public void onRightClick(PlayerInteractEvent event){
