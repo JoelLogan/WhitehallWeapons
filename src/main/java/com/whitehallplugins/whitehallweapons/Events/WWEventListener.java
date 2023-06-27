@@ -388,14 +388,17 @@ public class WWEventListener implements Listener {
                 block.getWorld().dropItemNaturally(location, new ItemStack(Material.NETHERITE_SCRAP, random.nextInt(1, 3)));
                 break;
             case COPPER_ORE:
+            case DEEPSLATE_COPPER_ORE:
                 block.getWorld().getBlockAt(location).setType(Material.AIR);
                 block.getWorld().dropItemNaturally(location, new ItemStack(Material.COPPER_INGOT, random.nextInt(9, 25)));
                 break;
             case GOLD_ORE:
+            case DEEPSLATE_GOLD_ORE:
                 block.getWorld().getBlockAt(location).setType(Material.AIR);
                 block.getWorld().dropItemNaturally(location, new ItemStack(Material.GOLD_INGOT, random.nextInt(2, 5)));
                 break;
             case IRON_ORE:
+            case DEEPSLATE_IRON_ORE:
                 block.getWorld().getBlockAt(location).setType(Material.AIR);
                 block.getWorld().dropItemNaturally(location, new ItemStack(Material.IRON_INGOT, random.nextInt(2, 5)));
                 break;
