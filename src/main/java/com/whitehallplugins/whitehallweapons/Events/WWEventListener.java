@@ -50,7 +50,7 @@ public class WWEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        event.getPlayer().setResourcePack("https://raw.githubusercontent.com/JoelLogan/WhitehallWeapons/master/Immortals_SMP_Pack.zip", "a2d0679abb7dac861597992537f655d4a4952dd6", true, Component.text("This resource pack is required for the custom textures of the Immortals items", Style.style(TextDecoration.BOLD)));
+        event.getPlayer().setResourcePack("https://raw.githubusercontent.com/JoelLogan/WhitehallWeapons/master/Immortals_SMP_Pack.zip", "a2d0679abb7dac861597992537f655d4a4952dd6", this.plugin.getConfig().getBoolean("ResourcePackRequired"), Component.text("This resource pack is required for the custom textures of the Immortals items", Style.style(TextDecoration.BOLD)));
     }
 
     @EventHandler
